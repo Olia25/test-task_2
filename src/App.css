@@ -1,38 +1,50 @@
-.App {
-  text-align: center;
+body{
+    margin: 0;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h2{
+    text-align: center;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.usersListCover{
+    display: flex;
+    justify-content: space-around;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.birthdayListCover{
+    width: 480px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 70px;
+    margin-left: 30px;
+    position: relative;
 }
+.birthdayListCover:before{
+    content: " ";
+    background: darkgrey;
+    width: 1px;
+    height: 100%;
+    float:left;
+    right: 100%;
+    position: absolute;
+    top:105px;
 
-.App-link {
-  color: #61dafb;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.usersList{
+    width: 800px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+.alphabet{
+    width: 145px;
+    padding-left: 20px;
+}
+.usersName{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.titleOfBirthdayList{
+    position: relative;
+    border-bottom: 1px solid currentColor;
+    padding-bottom:50px;
+    width: 70%;
 }
