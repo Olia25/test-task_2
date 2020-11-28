@@ -1,18 +1,19 @@
 import "./App.css";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ALPHABET, MONTH_NAMES } from "./constants/constants";
+import {SET_DATA} from './reducers/data'
+import {SELECTED_ID} from './reducers/ids'
+import {connect} from "react-redux";
 
-function App() {
-    const [data, setData] = useState([]);
-    const [selectedId, setSelectedId] = useState([]);
+function App(props) {
 
     const getData = async () => {
         try {
             const response = await axios.get(
                 "https://yalantis-react-school-api.yalantis.com/api/task0/users"
             );
-            setData(response.data);
+            props.setData(response.data);
         } catch (e) {
             console.log(e.message);
         }
@@ -22,22 +23,7 @@ function App() {
         getData();
     }, []);
 
-    useEffect(() => {
-        const parsedId = JSON.parse(localStorage.getItem("selectedId") || []);
-        setSelectedId(parsedId);
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem("selectedId", JSON.stringify(selectedId));
-    }, [selectedId]);
-
-    const getCheckId = (checked, id) => {
-        setSelectedId(
-            checked ? [...selectedId, id] : selectedId.filter((elem) => elem !== id)
-        );
-    };
-
-    const checkedUsers = data.filter(({ id }) => selectedId.includes(id));
+    const checkedUsers = props.data.filter(({ id }) => props.selectedId.includes(id));
 
     const groupedUsersByMonth = MONTH_NAMES.map((elem, index) =>
         checkedUsers.filter(({ dob }) => index === new Date(dob).getMonth())
@@ -49,8 +35,8 @@ function App() {
                 <h2>Employees</h2>
                 <div className="usersList">
                     {ALPHABET.map((letter, index) => {
-                        const users = data
-                            ? data.filter(({ lastName }) => lastName[0] === letter)
+                        const users = props.data
+                            ? props.data.filter(({ lastName }) => lastName[0] === letter)
                             : [];
                         return (
                             <div className="alphabet" key={index}>
@@ -61,9 +47,9 @@ function App() {
                                             <p>{`${lastName} ${firstName}`} </p>
                                             <input
                                                 type="checkbox"
-                                                checked={selectedId.includes(id)}
+                                                checked={props.selectedId.includes(id)}
                                                 onChange={(value) => {
-                                                    getCheckId(value.target.checked, id);
+                                                    props.getCheckId(value.target.checked, id);
                                                 }}
                                             />
                                         </div>
@@ -79,7 +65,7 @@ function App() {
 
             <div className="birthdayListCover">
                 <h2 className="titleOfBirthdayList"> Employees birthday</h2>
-                {selectedId.length > 0 ? (
+                {props.selectedId.length > 0 ? (
                     groupedUsersByMonth.map((elem, monthByIndex) => {
                         const monthName = MONTH_NAMES.find(
                             (elem, index) => index === monthByIndex
@@ -110,4 +96,17 @@ function App() {
     );
 }
 
-export default App;
+export default connect(
+    state => ({
+        data : state.data,
+        selectedId : state.ids
+    }),
+    dispatch =>({
+        setData: (data) => {
+            dispatch({ type: SET_DATA, payload: data})
+        },
+        getCheckId: (checked, id) => {
+            dispatch({ type: SELECTED_ID, payload: {checked, id}});
+        }
+    })
+)(App);
